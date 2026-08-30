@@ -83,9 +83,11 @@ design-project-management-system/
 │   ├── requirements/
 │   │   ├── tz.md
 │   │   └── functional-requirements.md
-│   ├── bpmn/
+│   ├── BPMN/
 │   │   ├── approval-as-is.png
 │   │   └── approval-to-be.png
+│   ├── UML/
+│   │   ├── use_case.png
 │   ├── er-diagram.png
 │   ├── er-diagram-original.png
 │   └── economic-effect.md
