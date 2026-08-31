@@ -80,7 +80,7 @@ DDL-скрипты — в [`db/migrations`](db/migrations). Аналитичес
 
 ## 6. Диаграмма последовательности (UML)
 
-В разработке:)
+TO BE CONTINUED ...
 
 ## 7. REST API
 
