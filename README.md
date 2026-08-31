@@ -78,6 +78,10 @@ DDL-скрипты — в [`db/migrations`](db/migrations). Аналитичес
 
 Арт-директор (внутреннее ревью и согласование).
 
+## 6. Диаграмма последовательности (UML)
+
+В разработке:)
+
 ## 7. REST API
 
 Контракт API, спроектированный на основе бизнес-требований — [`docs/API/README.md`](docs/API/README.md), полная OpenAPI-спецификация — [`docs/API/openapi.yaml`](docs/API/openapi.yaml).
