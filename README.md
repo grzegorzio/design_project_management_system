@@ -78,8 +78,11 @@ DDL-скрипты — в [`db/migrations`](db/migrations). Аналитичес
 
 Арт-директор (внутреннее ревью и согласование).
 
+## 7. REST API
 
-## 6. Оценка экономического эффекта
+Контракт API, спроектированный на основе бизнес-требований — [`docs/API/README.md`](docs/API/README.md), полная OpenAPI-спецификация — [`docs/API/openapi.yaml`](docs/API/openapi.yaml).
+
+## 8. Оценка экономического эффекта
 
 Реальный расчёт из исследовательского раздела ВКР — методика, формулы и исходные данные в [`docs/economic-effect.md`](docs/economic-effect.md).
 
@@ -95,6 +98,9 @@ DDL-скрипты — в [`db/migrations`](db/migrations). Аналитичес
 design-project-management-system/
 ├── README.md
 ├── docs/
+│   ├── API/
+│   │   ├── README.md
+│   │   └── openapi.yaml
 │   ├── requirements/
 │   │   ├── tz.md
 │   │   └── functional-requirements.md
@@ -123,8 +129,10 @@ design-project-management-system/
 1. **`docs/requirements/tz.md`** — постановка задачи и требования
 2. **`docs/BPMN/`** — как процесс работает сейчас и как будет работать
 3. **`docs/er-diagram.png` + `db/`** — как процесс лёг на модель данных
-4. **`db/queries/analytics.sql`** — аналитические запросы к данным
-5. **`docs/economic-effect.md`** — обоснование эффекта от внедрения
+4. **`docs/UML/use_case.png`** — как процесс распределяет функционал разным ролям
+5. **`db/queries/analytics.sql`** — аналитические запросы к данным
+6. **`docs/API/API.yaml`** — описание интеграции в стиле REST
+7. **`docs/economic-effect.md`** — обоснование эффекта от внедрения
 
 ## Возможные доработки
 
