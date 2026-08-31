@@ -1,0 +1,470 @@
+openapi: 3.0.3
+info:
+  title: Design Project Management System API
+  description: >
+    REST API для системы управления проектами дизайнерской компании.
+    Контракт описывает основные ресурсы: аутентификация, клиенты, сотрудники,
+    проекты, задачи и согласование макетов.
+  version: 1.0.0
+  contact:
+    name: Roman Karashchuk
+
+servers:
+  - url: https://api.design-pms.local/v1
+    description: Локальное окружение / демо
+
+tags:
+  - name: Auth
+    description: Аутентификация и текущий пользователь
+  - name: Clients
+    description: Управление клиентами
+  - name: Employees
+    description: Управление сотрудниками
+  - name: Projects
+    description: Проекты
+  - name: Tasks
+    description: Задачи и согласование макетов
+
+paths:
+
+  # ================= AUTH =================
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [login, password]
+              properties:
+                login:
+                  type: string
+                  example: client_ivanov
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  role:
+                    type: string
+                    enum: [client, employee, admin]
+        '401':
+          description: Неверный логин или пароль
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Информация о текущем пользователе
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Данные текущего пользователя
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # ================= CLIENTS =================
+  /clients:
+    get:
+      tags: [Clients]
+      summary: Список клиентов
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Поиск по названию компании
+      responses:
+        '200':
+          description: Список клиентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+
+    post:
+      tags: [Clients]
+      summary: Создать клиента
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientInput'
+      responses:
+        '201':
+          description: Клиент создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+
+  /clients/{clientId}:
+    get:
+      tags: [Clients]
+      summary: Получить клиента по ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Данные клиента
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '404':
+          description: Клиент не найден
+
+  # ================= PROJECTS =================
+  /projects:
+    get:
+      tags: [Projects]
+      summary: Список проектов
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: client_id
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [planned, in_progress, on_hold, completed, cancelled]
+      responses:
+        '200':
+          description: Список проектов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+    post:
+      tags: [Projects]
+      summary: Создать проект
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectInput'
+      responses:
+        '201':
+          description: Проект создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{projectId}:
+    get:
+      tags: [Projects]
+      summary: Получить проект по ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Данные проекта
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Проект не найден
+
+    patch:
+      tags: [Projects]
+      summary: Обновить статус или данные проекта
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [planned, in_progress, on_hold, completed, cancelled]
+                end_date:
+                  type: string
+                  format: date
+      responses:
+        '200':
+          description: Проект обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  # ================= TASKS =================
+  /projects/{projectId}/tasks:
+    get:
+      tags: [Tasks]
+      summary: Список задач проекта
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      responses:
+        '200':
+          description: Список задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+    post:
+      tags: [Tasks]
+      summary: Создать задачу в проекте
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/ProjectId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInput'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{taskId}:
+    get:
+      tags: [Tasks]
+      summary: Получить задачу по ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      responses:
+        '200':
+          description: Данные задачи
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{taskId}/status:
+    patch:
+      tags: [Tasks]
+      summary: >
+        Изменить статус задачи / согласования макета.
+        Реализует бизнес-процесс TO-BE: todo → in_progress → review → done,
+        с возможностью возврата в in_progress через отметку "требует доработки".
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - $ref: '#/components/parameters/TaskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [todo, in_progress, review, done]
+                comment:
+                  type: string
+                  description: Комментарий арт-директора/клиента при отправке на доработку
+      responses:
+        '200':
+          description: Статус обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  # ================= EMPLOYEES =================
+  /employees:
+    get:
+      tags: [Employees]
+      summary: Список сотрудников
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: position
+          in: query
+          schema:
+            type: string
+          description: Фильтр по должности (например, "Арт-директор")
+      responses:
+        '200':
+          description: Список сотрудников
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+
+  /employees/{employeeId}/workload:
+    get:
+      tags: [Employees]
+      summary: Загрузка сотрудника (активные/завершённые задачи)
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: employeeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Сводка по загрузке
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_tasks:
+                    type: integer
+                  done_tasks:
+                    type: integer
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    ClientId:
+      name: clientId
+      in: path
+      required: true
+      schema:
+        type: integer
+    ProjectId:
+      name: projectId
+      in: path
+      required: true
+      schema:
+        type: integer
+    TaskId:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        login: { type: string }
+        role: { type: string, enum: [client, employee, admin] }
+        is_active: { type: boolean }
+
+    Client:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        company_name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        inn: { type: string }
+        created_at: { type: string, format: date-time }
+
+    ClientInput:
+      type: object
+      required: [company_name, email, inn]
+      properties:
+        company_name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: string }
+        inn: { type: string }
+
+    Employee:
+      type: object
+      properties:
+        id: { type: integer }
+        user_id: { type: integer }
+        full_name: { type: string }
+        position: { type: string }
+        created_at: { type: string, format: date-time }
+
+    Project:
+      type: object
+      properties:
+        id: { type: integer }
+        client_id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        status:
+          type: string
+          enum: [planned, in_progress, on_hold, completed, cancelled]
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+        created_at: { type: string, format: date-time }
+
+    ProjectInput:
+      type: object
+      required: [client_id, name]
+      properties:
+        client_id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        start_date: { type: string, format: date }
+        end_date: { type: string, format: date }
+
+    Task:
+      type: object
+      properties:
+        id: { type: integer }
+        project_id: { type: integer }
+        assignee_id: { type: integer, nullable: true }
+        title: { type: string }
+        description: { type: string }
+        status:
+          type: string
+          enum: [todo, in_progress, review, done]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        due_date: { type: string, format: date }
+        created_at: { type: string, format: date-time }
+
+    TaskInput:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string }
+        description: { type: string }
+        assignee_id: { type: integer }
+        priority:
+          type: string
+          enum: [low, medium, high]
+        due_date: { type: string, format: date }
