@@ -112,6 +112,7 @@ design-project-management-system/
 │   │   ├── approval-as-is.png
 │   │   └── approval-to-be.png
 │   ├── UML/
+│   │   ├── sequence_diagram.png
 │   │   └── use_case.png
 │   ├── er-diagram.png
 │   ├── er-diagram-original.png
