@@ -14,7 +14,7 @@
 **Инструменты:** BPMN 2.0 · UML · ER-диаграмма · SQL / PostgreSQL · Swagger / OpenAPI
 **Статус:** готов к демонстрации
 
-📄 Автор: Роман Каращук — [резюме на hh.ru](#) · [Telegram](https://t.me/Grzegorzio) · 🇬🇧 [English summary](README.en.md)
+📄 Автор: Роман Каращук — [резюме на hh.ru](https://arkhangelsk.hh.ru/resume/83f764d9ff107fc0da0039ed1f6d5572526677) · [Telegram](https://t.me/Grzegorzio) · 🇬🇧 [English summary](README.en.md)
 
 ---
 
